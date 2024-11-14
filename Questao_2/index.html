@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Tarefas</title>
+    <img src = "C:\Users\thais\Documents\NOTA_FINAL2\imagem_Av2.png" alt = "espiral">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c9c9b4;
+            text-align: center;
+            border: 10px solid #000000;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 50px;            
+        }
+        .task-list-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .task-list {
+            width: 45%;
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 18px;
+        }
+        #taskList, #completedTasksList {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task {
+            background-color: #ffffff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .task input {
+            margin-right: 10px;
+        }
+        .task button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .task button:hover {
+            background-color: darkred;
+        }
+        #newTaskInput, #taskDueDate {
+            padding: 10px;
+            width: 250px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #addTaskButton {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        #addTaskButton:hover {
+            background-color: darkgreen;
+    
+        }
+
+        img{
+        position: relative;
+        margin-top: 0;
+        padding: 0;    
+     }
+    </style>
+</head>
+<body>
+
+    <h1>Planner</h1>
+
+    <!-- Formulário para adicionar nova tarefa -->
+    <div>
+        <input type="text" id="newTaskInput" placeholder="Adicione uma nova tarefa..." />
+        <input type="date" id="taskDueDate" />
+        <button id="addTaskButton">Adicionar Tarefa</button>
+    </div>
+    
+
+    <!-- Container para separar as listas de tarefas não concluídas e concluídas -->
+    <div class="task-list-container">
+        <div class="task-list">
+            <h2>Tarefas Não Concluídas</h2>
+            <ul id="taskList"></ul>
+        </div>
+        <div class="task-list">
+            <h2>Tarefas Concluídas</h2>
+            <ul id="completedTasksList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Função para adicionar uma nova tarefa
+        document.getElementById('addTaskButton').onclick = function() {
+            const taskInput = document.getElementById('newTaskInput');
+            const dueDateInput = document.getElementById('taskDueDate');
+            const taskDescription = taskInput.value.trim();
+            const dueDate = dueDateInput.value;
+
+            if (taskDescription === '') {
+                alert("Por favor, insira uma descrição para a tarefa.");
+                return;
+            }
+
+            // Se a data não for preenchida, mostra um alerta
+            if (dueDate === '') {
+                alert("Por favor, insira uma data de vencimento.");
+                return;
+            }
+
+            // Criação da tarefa
+            const taskList = document.getElementById('taskList');
+            const newTask = document.createElement('li');
+            newTask.classList.add('task');
+            
+            // Criar checkbox para marcar a tarefa como concluída
+            const taskCheckbox = document.createElement('input');
+            taskCheckbox.type = 'checkbox';
+            taskCheckbox.onclick = function() {
+                if (taskCheckbox.checked) {
+                    moveToCompleted(newTask);
+                } else {
+                    moveToNotCompleted(newTask);
+                }
+            };
+
+            // Criar texto da tarefa
+            const taskText = document.createElement('span');
+            taskText.textContent = taskDescription;
+
+            // Exibir data de vencimento
+            const taskDueDate = document.createElement('span');
+            taskDueDate.textContent = ` - Vencimento: ${new Date(dueDate).toLocaleDateString()}`;
+            taskDueDate.style.fontStyle = 'italic';
+            taskDueDate.style.color = '#888';
+
+            // Criar botão de excluir
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Excluir';
+            deleteButton.onclick = function() {
+                removeTask(newTask);
+            };
+
+            // Adicionar os elementos dentro da nova tarefa
+            newTask.appendChild(taskCheckbox);
+            newTask.appendChild(taskText);
+            newTask.appendChild(taskDueDate);
+            newTask.appendChild(deleteButton);
+
+            // Adicionar a nova tarefa à lista de tarefas não concluídas
+            taskList.appendChild(newTask);
+
+            // Limpar o campo de entrada após adicionar a tarefa
+            taskInput.value = '';
+            dueDateInput.value = '';  // Limpar o campo da data
+        };
+
+        // Função para mover a tarefa para a lista de concluídas
+        function moveToCompleted(task) {
+            const completedTasksList = document.getElementById('completedTasksList');
+            completedTasksList.appendChild(task);
+            task.style.textDecoration = 'line-through';
+            task.style.backgroundColor = '#d3ffd3'; // Cor de fundo para tarefas concluídas
+        }
+
+        // Função para mover a tarefa de volta para a lista de não concluídas
+        function moveToNotCompleted(task) {
+            const taskList = document.getElementById('taskList');
+            taskList.appendChild(task);
+            task.style.textDecoration = 'none';
+            task.style.backgroundColor = '#fff'; // Cor de fundo para tarefas não concluídas
+        }
+
+        // Função para excluir uma tarefa
+        function removeTask(task) {
+            task.parentNode.removeChild(task);
+        }
+    </script>
+
+</body>
+</html>
